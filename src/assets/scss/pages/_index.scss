@@ -1,0 +1,174 @@
+//首頁banner
+.banner {
+  background-image: url("../../images/index/banner.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 289px 150px 288px 200px;
+  @include pad {
+    background-image: url("../../images/index/banner-sm.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 155px 24px;
+  }
+}
+//熱銷補貨
+//人氣 No1 position
+.hot-goods {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 8px 12px;
+  color: $primary-400;
+  background-color: $primary-100;
+}
+//手機輪播排版
+@media screen and (max-width: 768px) {
+  .hotGood-md-row {
+    margin-left: -8px;
+    margin-right: -8px;
+  }
+  .hotGood-md-col {
+    min-width: 316px; //(含間距)
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+//廣告
+.ad {
+  margin-top: 48px;
+  margin-bottom: 48px;
+  background-image: url("../../images/index/banner-co-branded.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 100px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  @include pad {
+    margin-top: 24px;
+    margin-bottom: 24px;
+    background-image: url("../../images/index/banner-co-branded-sm.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 64px 0px;
+  }
+  .sparkle-img {
+    position: absolute;
+    width: 7rem;
+    top: 75%;
+    left: 75%;
+    transform: translate(-50%, -50%);
+  }
+  .star-img {
+    position: absolute;
+    width: 4rem;
+    top: 15%;
+    left: 23%;
+    transform: translate(-50%, -50%);
+  }
+}
+@media screen and (max-width: 1200px) {
+  .ad {
+    .sparkle-img {
+      position: absolute;
+      width: 7rem;
+      left: 85%;
+      top: 85%;
+    }
+    .star-img {
+      position: absolute;
+      width: 4rem;
+      top: 15%;
+      left: 10%;
+    }
+  }
+}
+@media screen and (max-width: 991px) {
+  .ad {
+    .star-img {
+      position: absolute;
+      width: 4rem;
+      top: 15%;
+      left: 8%;
+    }
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .ad {
+    .sparkle-img {
+      position: absolute;
+      width: 7rem;
+      left: 85%;
+      top: 85%;
+      transform: translate(-50%, -50%);
+    }
+    .star-img {
+      position: absolute;
+      width: 4rem;
+      top: 15%;
+      left: 6%;
+    }
+  }
+}
+
+//依系列選購（黑色遮罩）
+.img-card:hover {
+  .overlay {
+    opacity: 1;
+  }
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+//穿搭靈感（格線系統）
+.inspiration-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: -4px;
+}
+.inspiration-col-4 {
+  width: calc(100% / 12 * 4);
+  padding: 4px;
+}
+.inspiration-col-6 {
+  width: calc(100% / 12 * 6);
+  padding: 4px;
+}
+.inspiration-col-12 {
+  width: calc(100%);
+  padding: 4px;
+}
+
+@media screen and (max-width: 768px) {
+  .inspiration-row {
+    flex-wrap: nowrap;
+    margin: 0 -8px;
+    img {
+      min-width: 300px;
+    }
+  }
+  .inspiration-col-4,
+  .inspiration-col-6,
+  .inspiration-col-12 {
+    width: unset; //取消原始的方式
+    padding: 0 8px;
+  }
+}

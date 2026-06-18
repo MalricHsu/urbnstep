@@ -1,0 +1,21 @@
+//品牌清單
+.category {
+  .active {
+    color: $primary-400;
+  }
+}
+//頁數
+.page-item {
+  .btn {
+    border-radius: 0;
+    padding: 8px 15px;
+    font-weight: 400;
+    &:hover {
+      background-color: $neutral-100;
+    }
+    &.active {
+      background-color: $primary-300;
+      font-weight: 500;
+    }
+  }
+}

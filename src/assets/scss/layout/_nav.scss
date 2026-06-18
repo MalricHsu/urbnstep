@@ -1,0 +1,27 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: $neutral-white;
+  z-index: 10;
+}
+
+.nav-icon-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background-color: $danger-300;
+  color: $neutral-white;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 12px;
+  line-height: 1.2;
+}

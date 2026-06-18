@@ -1,0 +1,43 @@
+//品牌故事banner
+.brand-title {
+  .eng-title {
+    font-size: 28px;
+    @include pad {
+      font-size: 20px;
+    }
+  }
+  background-image: url("../../images/brand-story/hero.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 152px 0;
+  @include pad {
+    background-image: url("../../images/brand-story/hero-mobile.png");
+    padding: 87px 0;
+  }
+}
+//品牌介紹
+.section-line {
+  border-bottom: 1px solid $neutral-300;
+}
+//品牌歷程
+.history-list {
+  list-style-type: disc;
+  padding-left: 24px;
+}
+.history-desc {
+  border-left: 1px solid $neutral-900;
+  padding-left: 8px;
+}
+//品牌理念
+.concept-item {
+  padding-left: 12px;
+  border-left: 3px solid $neutral-300;
+}
+//品牌小故事
+.brand-story {
+  a:hover {
+    background: $primary-400;
+    color: $neutral-white;
+  }
+}

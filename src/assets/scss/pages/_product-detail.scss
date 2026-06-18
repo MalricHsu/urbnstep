@@ -1,0 +1,88 @@
+//產品圖片格線系統
+.product-row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -4px;
+  margin-right: -4px;
+}
+.product-col {
+  width: calc(100% / 2);
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+//產品顏色
+.product-color {
+  width: 64px;
+  text-align: center;
+  color: $neutral-600;
+}
+
+//收藏／預約
+.product-action {
+  display: flex;
+  gap: 8px;
+  .btn {
+    width: 50%;
+  }
+  .bi {
+    padding-right: 8px;
+    width: 19px;
+    height: 19px;
+  }
+  @include mobile {
+    .product-action {
+      display: flex;
+      align-items: center;
+      .btn {
+        width: 85%;
+      }
+    }
+    .like {
+      all: unset;
+      cursor: pointer;
+      i {
+        font-size: 46px;
+      }
+    }
+
+    .bi-heart {
+      font-size: 46px;
+    }
+    .bi-heart-fill {
+      font-size: 46px;
+    }
+  }
+}
+
+//收藏i標籤大小設定
+.bi-heart {
+  font-size: 18px;
+}
+.bi-heart-fill {
+  font-size: 20px;
+}
+.bi-handbag {
+  font-size: 18px;
+}
+
+//swiper圓點設定
+.swiper-pagination-bullet {
+  background-color: $neutral-300;
+  opacity: 1;
+}
+.swiper-pagination-bullet-active {
+  background-color: $primary-400;
+}
+
+//第二個輪播設定寬度
+.productSwiper {
+  .swiper-slide {
+    max-width: 300px !important; // 以覆蓋 Swiper內建的 inline style
+    a {
+      display: flex;
+      flex-direction: column;
+      max-width: 100%;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+//顏色設定
+$neutral-white: #ffffff;
+$primary-100: #f5fee7;
+$primary-200: #e8fec5;
+$primary-300: #c0fa73;
+$primary-400: #57a203;
+$primary-500: #477a11;
+$neutral-100: #f8f9fa;
+$neutral-300: #dee2e6;
+$neutral-500: #adb5bd;
+$neutral-600: #6c757d;
+$neutral-900: #212529;
+$danger-300: #d74f4f;
+
+.text-primary-300 {
+  color: $primary-300;
+}
+.text-primary-400 {
+  color: $primary-400;
+}
+.text-neutral-500 {
+  color: $neutral-500;
+}
+.text-neutral-600 {
+  color: $neutral-600;
+}
+.text-neutral-900 {
+  color: $neutral-900;
+}
+.text-danger-300 {
+  color: $danger-300;
+}
+.text-white {
+  color: $neutral-white;
+}
+
+//背景設定
+.bg-primary-100 {
+  background-color: $primary-100;
+}
+.bg-primary-200 {
+  background-color: $primary-200;
+}
+.bg-neutural-100 {
+  background-color: $neutral-100;
+}
