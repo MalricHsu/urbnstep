@@ -1,3 +1,10 @@
+//手機版產品圖輪播：限制最大寬度並置中，避免在平板寬度被放到太大張
+.product-gallery {
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 //產品圖片格線系統
 .product-row {
   display: flex;

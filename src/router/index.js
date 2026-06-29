@@ -3,6 +3,10 @@ import IndexView from '../views/IndexView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
+  // 切換路由時捲回頁面最上面
+  scrollBehavior() {
+    return { top: 0 }
+  },
   routes: [
     {
       path: '/',

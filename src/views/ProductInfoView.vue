@@ -1,38 +1,17 @@
 <template>
-  <main class="mt-80 mt-sm-70 container py-16 mb-10 py-md-0">
+  <main v-if="product" class="mt-80 mt-sm-70 container py-16 mb-10 py-md-0">
     <div class="row">
       <!-- 產品圖片 -->
       <!-- 桌面版 -->
       <div class="col-7 d-md-none">
         <div class="product-row">
-          <div class="product-col mb-2">
-            <img src="../assets/images/product-info/image-1.png" alt="照片1" />
-          </div>
-          <div class="product-col mb-2">
-            <img src="../assets/images/product-info/image-2.png" alt="照片2" />
-          </div>
-          <div class="product-col mb-2">
-            <img src="../assets/images/product-info/image-3.png" alt="照片3" />
-          </div>
-          <div class="product-col mb-2">
-            <img src="../assets/images/product-info/image-4.png" alt="照片4" />
-          </div>
-          <div class="product-col mb-2">
-            <img src="../assets/images/product-info/image-5.png" alt="照片5" />
-          </div>
-          <div class="product-col mb-2">
-            <img src="../assets/images/product-info/image-6.png" alt="照片6" />
-          </div>
-          <div class="product-col">
-            <img src="../assets/images/product-info/image-7.png" alt="照片7" />
-          </div>
-          <div class="product-col">
-            <img src="../assets/images/product-info/image-8.png" alt="照片8" />
+          <div v-for="(img, i) in product.images" :key="i" class="product-col mb-2">
+            <img :src="img" :alt="`${product.name} 照片${i + 1}`" />
           </div>
         </div>
       </div>
       <!-- 手機版 -->
-      <div class="d-none d-md-block mb-md-6">
+      <div class="d-none d-md-block mb-md-6 product-gallery">
         <Swiper
           :slides-per-view="1"
           :space-between="16"
@@ -40,29 +19,8 @@
           :modules="[Pagination]"
           :pagination="{ clickable: true }"
         >
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-1.png" alt="照片1" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-2.png" alt="照片2" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-3.png" alt="照片3" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-4.png" alt="照片4" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-5.png" alt="照片5" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-6.png" alt="照片6" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-7.png" alt="照片7" />
-          </SwiperSlide>
-          <SwiperSlide>
-            <img src="../assets/images/product-info/image-8.png" alt="照片8" />
+          <SwiperSlide v-for="(img, i) in product.images" :key="i">
+            <img :src="img" :alt="`${product.name} 照片${i + 1}`" />
           </SwiperSlide>
         </Swiper>
       </div>
@@ -77,47 +35,29 @@
             <li class="breadcrumb-item">
               <RouterLink class="breadcrumb-link fw-500 sm-md" to="/products">女鞋</RouterLink>
             </li>
-            <li class="breadcrumb-item">
-              <RouterLink class="breadcrumb-link fw-500 sm-md" to="/products">滑板鞋</RouterLink>
-            </li>
-            <li class="breadcrumb-item fw-500 sm-md">Platform 404</li>
+            <li class="breadcrumb-item fw-500 sm-md">{{ product.name }}</li>
           </ol>
         </nav>
         <div class="mb-8">
-          <h1 class="h2 mb-4 h4-md mb-md-3">Platform 404</h1>
+          <h1 class="h2 mb-4 h4-md mb-md-3">{{ product.name }}</h1>
           <p class="h5 text-primary-400 mb-4 h6-md mb-md-3">
-            NT$2,600
-            <del class="sm text-neutral-500 fw-400 me-2">NT$3,200</del>
+            NT${{ formatPrice(product.price) }}
+            <del v-if="product.onSale" class="sm text-neutral-500 fw-400 me-2"
+              >NT${{ formatPrice(product.originalPrice) }}</del
+            >
           </p>
-          <p class="mb-3">
-            Platform 404
-            以柔和奶白為底，搭配深藍色皮革點綴，走在街上自帶回頭率。鞋型採用復古運動風輪廓，結合輕量厚底與柔軟泡棉鞋舌，兼顧美感與舒適。
-          </p>
-          <p>
-            鞋身選用柔軟皮革材質，打造出清新卻不失個性的氛圍，並以鞋面透氣孔設計提升穿著體驗，兼顧質感與舒適度，適合日常長時間著用。無論是街頭穿搭、日常通勤或週末出遊都能輕鬆駕馭。
-          </p>
+          <p class="mb-3">{{ product.description }}</p>
         </div>
         <!-- 產品顏色 -->
         <div class="mb-8 mb-md-6">
           <h3 class="mb-2">顏色</h3>
           <ul class="d-flex">
-            <li class="me-2">
-              <RouterLink class="fw-500 text-decoration-none text-neutral-600 d-block text-center" to="/products/1"
-                ><img
-                  class="w-64 h-64 mb-1"
-                  src="../assets/images/product-list/product-1.png"
-                  alt="藍色"
-                />藍色</RouterLink
-              >
-            </li>
-            <li>
-              <RouterLink class="fw-500 text-decoration-none text-neutral-600 d-block text-center" to="/products/2"
-                ><img
-                  class="w-64 h-64 mb-1"
-                  src="../assets/images/product-list/product-2.png"
-                  alt="卡其色"
-                />卡其色</RouterLink
-              >
+            <li v-for="color in product.colors" :key="color.code" class="me-2 text-center">
+              <span
+                class="w-64 h-64 mb-1 d-block rounded"
+                :style="{ backgroundColor: color.code }"
+              ></span>
+              <span class="fw-500 text-neutral-600">{{ color.name }}</span>
             </li>
           </ul>
         </div>
@@ -125,17 +65,17 @@
         <div class="mb-12 mb-md-6">
           <h3 class="mb-2">尺寸</h3>
           <div class="d-flex flex-wrap gap-2 mb-2">
-            <button type="button" class="btn btn-product-size active">35(22.5cm)</button>
-            <button type="button" class="btn btn-product-size">36(23.0cm)</button>
-            <button type="button" class="btn btn-product-size">37(23.5cm)</button>
-            <button type="button" class="btn btn-product-size">38(24.0cm)</button>
-            <button type="button" class="btn btn-product-size">39(24.5cm)</button>
-            <button type="button" class="btn btn-product-size">40(25.0cm)</button>
-            <button type="button" class="btn btn-product-size">41(26.0cm)</button>
-            <button type="button" class="btn btn-product-size" disabled>42(26.5cm)</button>
-            <button type="button" class="btn btn-product-size" disabled>43(27.0cm)</button>
+            <button
+              v-for="size in product.sizes"
+              :key="size.eu"
+              type="button"
+              class="btn btn-product-size"
+              :disabled="!size.inStock"
+            >
+              {{ size.eu }}({{ size.cm }}cm)
+            </button>
           </div>
-          <p class="sm text-danger-300">僅剩 3 雙</p>
+          <p v-if="product.stock <= 5" class="sm text-danger-300">僅剩 {{ product.stock }} 雙</p>
         </div>
         <!-- 收藏/預約 -->
         <div class="product-action mb-8">
@@ -152,10 +92,7 @@
         <div class="product-material py-3 border-bottom">
           <p class="fw-500 mb-1">商品材質</p>
           <ul>
-            <li class="text-neutral-600">鞋面：合成皮革（Synthetic Leather）</li>
-            <li class="text-neutral-600">內裡：透氣網布材質，提升舒適與排汗性</li>
-            <li class="text-neutral-600">鞋底：EVA 輕量發泡橡膠，具備良好緩震與止滑效果</li>
-            <li class="text-neutral-600">鞋帶：聚酯纖維，耐拉扯不易鬆脫</li>
+            <li v-for="(item, i) in materialList" :key="i" class="text-neutral-600">{{ item }}</li>
           </ul>
         </div>
         <div class="purchase-notice py-3 border-bottom">
@@ -186,39 +123,23 @@
     </div>
   </main>
   <!-- 你可能有興趣 -->
-  <div class="container">
+  <div v-if="recommendations.length" class="container">
     <div class="row py-16 py-md-10">
       <div class="col-12">
         <h4 class="h4 mb-4 py-2-5 h5-md">你可能也喜歡...</h4>
       </div>
-      <div class="col-3 d-md-none">
-        <RouterLink to="/products/3" class="d-flex flex flex-direction-column text-neutral-900 text-decoration-none">
-          <img class="mb-3" src="../assets/images/product-list/product-3.png" alt="商品3" />
-          <h4 class="h6 mb-1">VM001</h4>
-          <p class="fw-500">NT$2,600</p>
+      <!-- 桌面版 -->
+      <div v-for="item in recommendations" :key="item.id" class="col-3 d-md-none">
+        <RouterLink
+          :to="`/products/${item.id}`"
+          class="d-flex flex flex-direction-column text-neutral-900 text-decoration-none"
+        >
+          <img class="mb-3" :src="item.thumb" :alt="item.name" />
+          <h4 class="h6 mb-1">{{ item.name }}</h4>
+          <p class="fw-500">NT${{ formatPrice(item.price) }}</p>
         </RouterLink>
       </div>
-      <div class="col-3 d-md-none">
-        <RouterLink to="/products/4" class="d-flex flex flex-direction-column text-neutral-900 text-decoration-none">
-          <img class="mb-3" src="../assets/images/product-list/product-4.png" alt="商品4" />
-          <h4 class="h6 mb-1">Melty Kiss</h4>
-          <p class="fw-500">NT$4,000</p>
-        </RouterLink>
-      </div>
-      <div class="col-3 d-md-none">
-        <RouterLink to="/products/5" class="d-flex flex flex-direction-column text-neutral-900 text-decoration-none">
-          <img class="mb-3" src="../assets/images/product-list/product-5.png" alt="商品5" />
-          <h4 class="h6 mb-1">BOOMBLOK</h4>
-          <p class="fw-500">NT$3,200</p>
-        </RouterLink>
-      </div>
-      <div class="col-3 d-md-none">
-        <RouterLink to="/products/8" class="d-flex flex flex-direction-column text-neutral-900 text-decoration-none">
-          <img class="mb-3" src="../assets/images/product-list/product-8.png" alt="商品8" />
-          <h4 class="h6 mb-1">Sugar Snap</h4>
-          <p class="fw-500">NT$3,200</p>
-        </RouterLink>
-      </div>
+      <!-- 手機版 -->
       <div class="d-none col-md-4 d-md-block">
         <Swiper
           :slides-per-view="1.2"
@@ -226,42 +147,12 @@
           :modules="[Pagination]"
           :pagination="{ clickable: true }"
         >
-          <SwiperSlide>
-            <RouterLink to="/products/3" class="text-neutral-900 text-decoration-none">
-              <img class="mb-3" src="../assets/images/product-list/product-3.png" alt="商品3" />
+          <SwiperSlide v-for="item in recommendations" :key="item.id">
+            <RouterLink :to="`/products/${item.id}`" class="text-neutral-900 text-decoration-none">
+              <img class="mb-3" :src="item.thumb" :alt="item.name" />
               <div class="product-info">
-                <h4 class="h6 mb-1">VM001</h4>
-                <p class="fw-500 mb-0">NT$2,600</p>
-              </div>
-            </RouterLink>
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <RouterLink to="/products/4" class="text-neutral-900 text-decoration-none">
-              <img class="mb-3" src="../assets/images/product-list/product-4.png" alt="商品4" />
-              <div class="product-info">
-                <h4 class="h6 mb-1">Melty Kiss</h4>
-                <p class="fw-500 mb-0">NT$4,000</p>
-              </div>
-            </RouterLink>
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <RouterLink to="/products/5" class="text-neutral-900 text-decoration-none">
-              <img class="mb-3" src="../assets/images/product-list/product-5.png" alt="商品5" />
-              <div class="product-info">
-                <h4 class="h6 mb-1">BOOMBLOK</h4>
-                <p class="fw-500 mb-0">NT$3,200</p>
-              </div>
-            </RouterLink>
-          </SwiperSlide>
-
-          <SwiperSlide>
-            <RouterLink to="/products/8" class="text-neutral-900 text-decoration-none">
-              <img class="mb-3" src="../assets/images/product-list/product-8.png" alt="商品8" />
-              <div class="product-info">
-                <h4 class="h6 mb-1">Sugar Snap</h4>
-                <p class="fw-500 mb-0">NT$3,200</p>
+                <h4 class="h6 mb-1">{{ item.name }}</h4>
+                <p class="fw-500 mb-0">NT${{ formatPrice(item.price) }}</p>
               </div>
             </RouterLink>
           </SwiperSlide>
@@ -279,4 +170,60 @@ import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import HightLight from '@/components/HightLight.vue'
+import { onMounted, ref, computed, watch } from 'vue'
+import axios from 'axios'
+import { formatPrice } from '@/utils/formatePrice'
+
+//從路由接收過來
+const props = defineProps({
+  id: {
+    type: String,
+    required: true,
+  },
+})
+
+const url = import.meta.env.VITE_API_URL
+const product = ref(null)
+const recommendations = ref([])
+
+// 一次最多顯示幾筆推薦
+const RECOMMEND_LIMIT = 4
+
+// 商品材質
+const materialList = computed(() =>
+  product.value?.material ? product.value.material.split('；').filter(Boolean) : [],
+)
+
+const fetchProduct = async () => {
+  try {
+    const res = await axios.get(`${url}/products/${props.id}`)
+    product.value = res.data
+    fetchRecommendations()
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchRecommendations = async () => {
+  try {
+    const res = await axios.get(`${url}/products`)
+    const others = res.data.filter((item) => String(item.id) !== String(props.id))
+    // 先取同分類的，不足再用其他商品補滿
+    const sameCategory = others.filter((item) => item.categoryId === product.value?.categoryId)
+    const rest = others.filter((item) => item.categoryId !== product.value?.categoryId)
+    recommendations.value = [...sameCategory, ...rest].slice(0, RECOMMEND_LIMIT)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(() => {
+  fetchProduct()
+})
+
+// 在同一頁切換不同商品 id 時重新抓取
+watch(
+  () => props.id,
+  () => fetchProduct(),
+)
 </script>
