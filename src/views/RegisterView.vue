@@ -13,32 +13,59 @@
             <RouterLink class="auth-tab auth-tab--inactive h6 text-neutral-600" to="/login"
               >登入</RouterLink
             >
-            <RouterLink class="auth-tab auth-tab--active h6 text-neutral-900" to="/register">註冊</RouterLink>
+            <RouterLink class="auth-tab auth-tab--active h6 text-neutral-900" to="/register"
+              >註冊</RouterLink
+            >
           </div>
-          
+
           <!-- 表單 -->
-          <form @submit.prevent>
+          <form @submit.prevent="handleRegister">
             <div class="auth-floating">
-              <input type="text" class="auth-input" id="registerName" placeholder=" ">
+              <input
+                v-model.trim="form.name"
+                type="text"
+                class="auth-input"
+                id="registerName"
+                placeholder=" "
+                required
+              />
               <label class="auth-label" for="registerName">姓名</label>
             </div>
 
             <div class="auth-floating">
-              <input type="email" class="auth-input" id="registerEmail" placeholder=" ">
+              <input
+                v-model.trim="form.email"
+                type="email"
+                class="auth-input"
+                id="registerEmail"
+                placeholder=" "
+                required
+              />
               <label class="auth-label" for="registerEmail">電子信箱</label>
             </div>
-            
+
             <div class="auth-floating">
-              <input type="password" class="auth-input" id="registerPassword" placeholder=" ">
+              <input
+                v-model="form.password"
+                type="password"
+                class="auth-input"
+                id="registerPassword"
+                placeholder=" "
+                required
+              />
               <label class="auth-label" for="registerPassword">密碼</label>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 py-3 mb-6">註冊</button>
+            <p v-if="errorMsg" class="sm text-danger-300 mb-3">{{ errorMsg }}</p>
+
+            <button type="submit" class="btn btn-primary w-100 py-3 mb-6" :disabled="isLoading">
+              {{ isLoading ? '註冊中...' : '註冊' }}
+            </button>
           </form>
 
           <div class="text-center text-neutral-500 mb-4">或透過以下方式註冊</div>
 
-          <div class="d-flex justify-content-center" style="gap: 16px;">
+          <div class="d-flex justify-content-center" style="gap: 16px">
             <a href="https://www.facebook.com/" target="_blank" class="social-icon-link">
               <img src="../assets/images/prodcut-logoin/facebook.svg" alt="Facebook" />
             </a>
@@ -49,7 +76,6 @@
               <img src="../assets/images/prodcut-logoin/google.svg" alt="Google" />
             </a>
           </div>
-
         </div>
       </div>
     </div>
@@ -57,5 +83,46 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
+import { ref } from 'vue'
+import axios from 'axios'
+import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
+
+const url = import.meta.env.VITE_API_URL
+const router = useRouter()
+const authStore = useAuthStore()
+const toastStore = useToastStore()
+
+const form = ref({
+  name: '',
+  email: '',
+  password: '',
+})
+const isLoading = ref(false)
+const errorMsg = ref('')
+
+const handleRegister = async () => {
+  errorMsg.value = ''
+  isLoading.value = true
+  try {
+    const res = await axios.post(`${url}/register`, {
+      name: form.value.name,
+      email: form.value.email,
+      password: form.value.password,
+    })
+    // store 統一處理
+    authStore.setAuth(res.data)
+    toastStore.showToast('註冊成功，歡迎加入！')
+
+    // 註冊成功導回首頁
+    router.push('/')
+  } catch (error) {
+    // json-server-auth 會用回應內文回傳錯誤訊息
+    errorMsg.value = error.response?.data || '註冊失敗，請稍後再試'
+    toastStore.showToast(errorMsg.value, 'error')
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>

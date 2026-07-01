@@ -54,8 +54,10 @@
           <ul class="d-flex">
             <li v-for="color in product.colors" :key="color.code" class="me-2 text-center">
               <span
-                class="w-64 h-64 mb-1 d-block rounded"
+                class="color-swatch w-64 h-64 mb-1 d-block rounded"
+                :class="{ 'color-swatch--active': selectedColor === color.name }"
                 :style="{ backgroundColor: color.code }"
+                @click="selectedColor = color.name"
               ></span>
               <span class="fw-500 text-neutral-600">{{ color.name }}</span>
             </li>
@@ -70,7 +72,9 @@
               :key="size.eu"
               type="button"
               class="btn btn-product-size"
+              :class="{ active: selectedSize === size.eu }"
               :disabled="!size.inStock"
+              @click="selectedSize = size.eu"
             >
               {{ size.eu }}({{ size.cm }}cm)
             </button>
@@ -79,16 +83,33 @@
         </div>
         <!-- 收藏/預約 -->
         <div class="product-action mb-8">
-          <button type="button" class="btn btn-light btn-favorite d-md-none">
-            <i class="bi bi-heart"></i>加入收藏
+          <!-- 手機版：文字收藏鈕 -->
+          <button
+            type="button"
+            class="btn btn-light btn-favorite d-md-none"
+            :disabled="!canFavorite"
+            @click="toggleFavorite"
+          >
+            <i class="bi" :class="isFavorite ? 'bi-heart-fill' : 'bi-heart'"></i>
+            {{ isFavorite ? '取消收藏' : '加入收藏' }}
           </button>
           <button type="button" class="btn btn-dark me-md-2">
             <i class="bi bi-handbag"></i>門市預約試穿
           </button>
-          <button type="button" class="like d-none d-md-block">
-            <i class="bi bi-heart"></i>
+          <!-- 桌機版：愛心鈕 -->
+          <button
+            type="button"
+            class="like d-none d-md-block"
+            :disabled="!canFavorite"
+            @click="toggleFavorite"
+          >
+            <i class="bi" :class="isFavorite ? 'bi-heart-fill' : 'bi-heart'"></i>
           </button>
         </div>
+        <!-- 未選顏色/尺寸時的提示 -->
+        <p v-if="!canFavorite" class="sm text-neutral-500 mb-8" style="margin-top: -1.5rem">
+          請先選擇顏色與尺寸才能加入收藏
+        </p>
         <div class="product-material py-3 border-bottom">
           <p class="fw-500 mb-1">商品材質</p>
           <ul>
@@ -164,7 +185,7 @@
 </template>
 
 <script setup>
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Pagination } from 'swiper/modules'
 import 'swiper/css'
@@ -173,6 +194,10 @@ import HightLight from '@/components/HightLight.vue'
 import { onMounted, ref, computed, watch } from 'vue'
 import axios from 'axios'
 import { formatPrice } from '@/utils/formatePrice'
+import { useAuthStore } from '@/stores/auth'
+import { useFavoriteStore } from '@/stores/favorite'
+import { useToastStore } from '@/stores/toast'
+import { SITE_NAME } from '@/router'
 
 //從路由接收過來
 const props = defineProps({
@@ -183,11 +208,12 @@ const props = defineProps({
 })
 
 const url = import.meta.env.VITE_API_URL
-const product = ref(null)
-const recommendations = ref([])
+const router = useRouter()
+const authStore = useAuthStore()
+const favoriteStore = useFavoriteStore()
+const toastStore = useToastStore()
 
-// 一次最多顯示幾筆推薦
-const RECOMMEND_LIMIT = 4
+const product = ref(null)
 
 // 商品材質
 const materialList = computed(() =>
@@ -198,12 +224,79 @@ const fetchProduct = async () => {
   try {
     const res = await axios.get(`${url}/products/${props.id}`)
     product.value = res.data
+    // 以商品名稱更新分頁標題
+    document.title = `${res.data.name}｜${SITE_NAME}`
+    // 切換商品時重置選取狀態
+    selectedColor.value = ''
+    selectedSize.value = ''
     fetchRecommendations()
+    restoreSelection()
   } catch (error) {
     console.error(error)
+    throw error // 往外拋
   }
 }
 
+// onMounted 與 watch 共用：統一接住 fetchProduct 的錯誤
+const loadProduct = async () => {
+  try {
+    await fetchProduct()
+  } catch (error) {
+    console.error('商品資料載入失敗', error)
+  }
+}
+
+// 使用者選取的顏色與尺寸
+const selectedColor = ref('')
+const selectedSize = ref('')
+
+// 顏色與尺寸都選了才能收藏
+const canFavorite = computed(() => !!selectedColor.value && !!selectedSize.value)
+
+// 收藏狀態直接來自 store（Nav、收藏頁共用同一份資料）
+const isFavorite = computed(() => favoriteStore.isFavorite(props.id))
+
+// 若此商品已收藏，還原當初選的顏色與尺寸
+const restoreSelection = async () => {
+  if (!authStore.isLogin) return
+  // 確保 store 已載入收藏清單（重整後直接進商品頁時）
+  if (!favoriteStore.favorites.length) await favoriteStore.fetchFavorites()
+  const fav = favoriteStore.getFavorite(props.id)
+  if (fav) {
+    selectedColor.value = fav.color || ''
+    selectedSize.value = fav.size || ''
+  }
+}
+
+// 加入 / 取消收藏
+const toggleFavorite = async () => {
+  // 未登入 → 導去登入頁，登入後回到本頁
+  if (!authStore.isLogin) {
+    router.push({ name: 'login', query: { redirect: `/products/${props.id}` } })
+    return
+  }
+  try {
+    if (isFavorite.value) {
+      // 取消收藏
+      const fav = favoriteStore.getFavorite(props.id)
+      await favoriteStore.removeFavorite(fav.id)
+    } else {
+      // 加入收藏
+      await favoriteStore.addFavorite({
+        productId: props.id,
+        color: selectedColor.value,
+        size: selectedSize.value,
+      })
+    }
+  } catch (error) {
+    console.error(error)
+    toastStore.showToast('操作失敗，請稍後再試', 'error')
+  }
+}
+
+const recommendations = ref([])
+// 一次最多顯示幾筆推薦
+const RECOMMEND_LIMIT = 4
 const fetchRecommendations = async () => {
   try {
     const res = await axios.get(`${url}/products`)
@@ -218,12 +311,28 @@ const fetchRecommendations = async () => {
 }
 
 onMounted(() => {
-  fetchProduct()
+  loadProduct()
 })
 
 // 在同一頁切換不同商品 id 時重新抓取
 watch(
   () => props.id,
-  () => fetchProduct(),
+  () => loadProduct(),
 )
 </script>
+
+<style scoped>
+.color-swatch {
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+.color-swatch--active {
+  border-color: #171717;
+}
+.like:disabled,
+.btn-favorite:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+</style>

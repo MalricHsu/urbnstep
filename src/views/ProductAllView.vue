@@ -94,10 +94,15 @@ const fetchProduct = async () => {
     productList.value = res.data
   } catch (error) {
     console.error(error)
+    throw error // 往外拋
   }
 }
 
-onMounted(() => {
-  fetchProduct()
+onMounted(async () => {
+  try {
+    await fetchProduct()
+  } catch (error) {
+    console.error('商品列表載入失敗', error)
+  }
 })
 </script>

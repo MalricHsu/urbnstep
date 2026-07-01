@@ -192,17 +192,21 @@ const fetchData = async (endpoint, targetRef) => {
   try {
     const res = await axios.get(`${url}/${endpoint}`)
     targetRef.value = res.data
-    console.log(res.data)
   } catch (error) {
     console.error(error)
+    throw error // 往外拋，讓呼叫端決定如何處理
   }
 }
 
 onMounted(async () => {
-  await Promise.all[
-    (fetchData('newProduct', newProductList),
-    fetchData('hotProduct', hotProductList),
-    fetchData('categories', categoriesProductList))
-  ]
+  try {
+    await Promise.all([
+      fetchData('newProduct', newProductList),
+      fetchData('hotProduct', hotProductList),
+      fetchData('categories', categoriesProductList),
+    ])
+  } catch (error) {
+    console.error('首頁資料載入失敗', error)
+  }
 })
 </script>
