@@ -318,6 +318,7 @@ onMounted(() => {
 watch(
   () => props.id,
   () => loadProduct(),
+  { immediate: true },
 )
 </script>
 
