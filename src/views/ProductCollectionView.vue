@@ -100,6 +100,26 @@
   </div>
 </template>
 
+<script setup>
+import { RouterLink } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useFavoriteStore } from '@/stores/favorite'
+import { formatPrice } from '@/utils/formatePrice'
+
+const favoriteStore = useFavoriteStore()
+// storeToRefs 響應性 陣列
+const { favorites } = storeToRefs(favoriteStore)
+
+const isLoading = ref(false)
+
+onMounted(async () => {
+  isLoading.value = true
+  await favoriteStore.fetchFavorites()
+  isLoading.value = false
+})
+</script>
+
 <style scoped>
 .btn-remove {
   background: none;
@@ -145,23 +165,3 @@
   font-size: 15px;
 }
 </style>
-
-<script setup>
-import { RouterLink } from 'vue-router'
-import { onMounted, ref } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useFavoriteStore } from '@/stores/favorite'
-import { formatPrice } from '@/utils/formatePrice'
-
-const favoriteStore = useFavoriteStore()
-// storeToRefs 響應性 陣列
-const { favorites } = storeToRefs(favoriteStore)
-
-const isLoading = ref(false)
-
-onMounted(async () => {
-  isLoading.value = true
-  await favoriteStore.fetchFavorites()
-  isLoading.value = false
-})
-</script>

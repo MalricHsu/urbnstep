@@ -3,13 +3,14 @@ import { ref, computed } from 'vue'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-// 管理登入狀態：token 與姓名，並同步寫入 / 讀取 cookie
+//管理登入狀態：token 與姓名，並同步寫入 / 讀取 cookie
 export const useAuthStore = defineStore('auth', () => {
-  // 初始值從 cookie 還原，重整頁面仍保持登入
+  // 初始值從 cookie 還原，重整頁面仍保持登入(取出 token name memberID)
   const token = ref(Cookies.get('token') || '')
   const name = ref(Cookies.get('name') || '')
   const memberId = ref(Cookies.get('memberId') || '')
 
+  // 看有沒有登入(用兩個!!是因為要改成布林值)
   const isLogin = computed(() => !!token.value)
 
   // 登入 / 註冊成功後呼叫：存狀態 + 寫 cookie + 設定 axios 預設 header
@@ -40,6 +41,5 @@ export const useAuthStore = defineStore('auth', () => {
       axios.defaults.headers.common.Authorization = `Bearer ${token.value}`
     }
   }
-
   return { token, name, memberId, isLogin, setAuth, logout, initAuth }
 })

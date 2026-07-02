@@ -14,10 +14,10 @@ export const useFavoriteStore = defineStore('favorite', () => {
   // Nav badge 收藏的商品筆數
   const count = computed(() => favorites.value.length)
 
-  // 總金額：每筆單價 × 數量加總
+  // 總金額：每筆單價 × 數量加總（product 可能不存在時以 0 計）
   const totalPrice = computed(() =>
     favorites.value.reduce(
-      (sum, product) => sum + product.product.price * (product.quantity || 1),
+      (sum, item) => sum + (item.product?.price || 0) * (item.quantity || 1),
       0,
     ),
   )
@@ -33,7 +33,8 @@ export const useFavoriteStore = defineStore('favorite', () => {
       const res = await axios.get(`${url}/favorites`, {
         params: { memberId: authStore.memberId, _expand: 'product' },
       })
-      favorites.value = res.data
+      // 過濾掉對應商品已不存在的收藏，避免後續讀取 product 時出錯
+      favorites.value = res.data.filter((item) => item.product)
     } catch (error) {
       console.error(error)
     }

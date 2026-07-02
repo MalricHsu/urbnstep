@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Cookies from 'js-cookie'
 import IndexView from '../views/IndexView.vue'
 
-// 站名，供分頁標題共用
+// 站名
 export const SITE_NAME = 'URBNSTEP'
 
 const router = createRouter({
